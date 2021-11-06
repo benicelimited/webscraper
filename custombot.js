@@ -9,33 +9,19 @@ const fs = require('fs')
 
 
 class Start {
-    constructor(url, proxy) {
+    constructor(url, webhook) {
         this.proxy = proxy
         this.url = url
         this.UA = ranUA.getRandom(ua => {
             return ua.browserName == "Chrome"
         })
-        this.theyHook = "https://discord.com/api/webhooks/890477501669855262/OaBrhwN9ugA806EkuudAY5mzpmlxcttVOuiS0JfgGODedU8l9zSgEvaPXf0GALcPd0TW"
-        this.myHook = "https://discord.com/api/webhooks/839703102630133790/IpvBeZamWmEA2OYkbVxMyIIgrjHU722Futw2eTLkctZ3TEt_j7V_sHFQhaVVmevey2z6"
+        this.theyHook = webhook
         this.profile = profile
         this.hook = new discord.Webhook(this.myHook)
 
     }
-    randomProxy = proxy => {
-        try {
-            if (proxy) {
-                let randomNum = Math.floor(Math.random() * proxy.length)
-                let randomProxy = proxy[randomNum]
-                let formattedProxy = "https://" + randomProxy.credusername + ":" + randomProxy.password + "@" + randomProxy.address + ":" + randomProxy.port
-                return formattedProxy
-
-            }
-        } catch (err) {
-            console.log('Proxy error')
-            return false
-        }
-    }
-
+	
+    //creates and manage files
     fileManager(data, mode) {
         let handler
         if (!fs.existsSync('./instockFiles.JSON')) {
@@ -74,6 +60,7 @@ class Start {
 
         }
     }
+	//send HTTP REQUEST TO WEBSITE
     async productFinder() {
         let handler;
         let list = []
@@ -89,7 +76,7 @@ class Start {
                 //proxy: this.randomProxy(this.proxy)
 
             })
-
+//PARSE DATA RECIEVED WITH CHEERIO
             let data = $.load(geturi.body)
             //let test = data('[class="variations_from cart"]').html()
             //console.log(test)
@@ -236,6 +223,9 @@ class Start {
 
 
     }
+	//FILTER NEWLY SCRAPED DATA FROM 
+//AND FLITERS FOR NEW PRODUCTS BY COMPARING IT WITH 
+//WITH PAST SCRAPED DATA
     async productFilter(elements) {
         let filteredItems;
         try {
@@ -265,6 +255,7 @@ class Start {
         }
 
     }
+	//discord web hook
     async monitorMode(products) {
         let hooklist = []
         let msg;
@@ -506,14 +497,6 @@ class Start {
 
 }
 //let url = 'https://www.shopcapcity.com/product/lakers-x-dodgers-new-era-9fifty-exclusive-black-snapback/'
-/*
-let newproxi = [
-    {address:"192.214.220.58",port:"6857",username:"VCXRO",password:"L1CZ09GU"},
-    {address:"162.254.6.211",port:"6973",username:"5NTZ4",password:"5A9ZXSMZ"},
-    {address:"192.214.220.114",port:"6738",username:"L4VDC",password:"L02FWHML"},
-    {address:"192.214.219.174",port:"5352",username:"L4VDC",password:"L02FWHML"}
-]
-*/
 let profile = { fname: "", lname: "", email: "", phoneNum: "", address: '', city: '', state: "", zipCode: "", cardNum: "", cardExp: "", cvc: "", cardType: "" }
 let task = new Start()
 function sleep(ms) {
